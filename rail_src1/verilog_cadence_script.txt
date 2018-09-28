@@ -1,0 +1,70 @@
+============ 0_import_netlist.run=========================
+source virtuoso_new2.cshrc
+
+rm -rf rail_design/SW*
+rm -rf rail_design/*VIA*
+
+virtuoso -replay src/verilogin_swb.il &
+
+============verilogin_swb.il=================================
+
+impHdlDisplay(impHdlOptionsFormMain)
+ihdlLoadParam()
+(hiFileDialogSetSelection impHdlLoadForm '("/home/cxchen2/workspace/VTS_T65_RAIL/rail_demo/src" "verilog_swb_in.xil") 'done) #select file
+(hiFileDialogDone impHdlLoadForm t) #press
+hiFormDone(impHdlOptionsFormMain)
+
+
+**potentially solution from https://community.cadence.com/cadence_technology_forums/f/custom-ic-skill/30627/automatically-ok-form-from-within-skill-code**
+hiRegTimer("hiFormDone(ICL_SYNCHRONIZE_FORM)" 5)
+hiSetCurrentForm('ICL_SYNCHRONIZE_FORM)
+**end
+
+** this part is using verilog in which can be evoked with "ihdl"
+ihdl -f ihdl_files verilog_design_file
+where
+ihdl is the executable name for Verilog In
+-f directs the executable to read command arguments from an option file
+ihdl_files is a file that contains the Verilog In options including the 
+-param option. The -param option references the ihdl_parameter file, which contains the parameter settings. which is the xil file 
+verilog_design_file is the Verilog file you want to import. 
+-v verilog_library_file.v
+-y verilog_library_path
+**ihdl /home/cxchen2/workspace/VTS_T65_RAIL/rail_demo/src/swbk01_sch.v -param verilog_swb_in.xil
+
+=============================1_place_rout.run=================================
+#source general.cshrc
+
+rm -rf mw_proj/*
+
+icc_shell -f src/apr.tcl
+
+#gds->cadence
+strmin -library 'rail_design' -strmFile '/home/cxchen2/workspace/VTS_T65_RAIL/rail_demo/aprout/swbk01.gds' -topCell 'SW_BANK_01' -logFile 'strmIn.log' -refLibList '/home/cxchen2/workspace/VTS_T65_RAIL/rail_demo/.cadence/xstream/IN/reflib.list' -numThreads 8
+
+#replace dummy symbol
+rm -r rail_design/SW_BANK_01/symbol
+cp -r ../rail65/TGAT/symbol rail_design/SW_BANK_01/
+
+#
+virtuoso -replay src/deopen.il &
+
+
+===========deopen.il=======================
+deOpen() #open cell
+deOpenForm->deLibName->value="rail_design"
+deOpenForm->deCellName->value="SW_BANK_01"
+deOpenForm->deViewName->value="schematic"
+hiFormDone(deOpenForm)
+
+deOpen()
+deOpenForm->deLibName->value="rail_design"
+deOpenForm->deCellName->value="SW_BANK_01"
+deOpenForm->deViewName->value="layout"
+hiFormDone(deOpenForm)
+
+#show all the layout(all layers)
+hiGetCurrentWindow()->stopLevel = dbGetMaxHierDepth()-1
+
+#lvs/drc TODO!!
+mgc_custom_menus_run_menu_cmd("LVS" "::CalibreInterface::execCalibre LVS" 'nil ?code "")

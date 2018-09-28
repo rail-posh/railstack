@@ -1,0 +1,14 @@
+source ./rail_script1/rail.cshrc
+
+@ current = 1
+while ($current <= $#argv)
+	if( "$argv[$current]" == "-libname") then
+		@ current++
+		setenv rail_lib_name $argv[$current]
+	endif
+	@ current++
+
+end
+
+
+python ./rail_src1/main.py $argv
