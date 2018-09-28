@@ -1,0 +1,16 @@
+# File Created by Xindi Liu at Thu Sep 27 18:25:09 2018
+# assisted by CdsLibEditor
+# File Created by Xindi Liu at Tue Jul  3 20:56:53 2018
+
+INCLUDE ./rail_src1/cds.lib.rail
+DEFINE tsmcN28 /home/cxchen2/workspace/VTS_fpna_mustang/tsmc28cl/tsmcN28
+DEFINE analogLib $CDSHOME/tools/dfII/etc/cdslib/artist/analogLib
+DEFINE basic $CDSHOME/tools/dfII/etc/cdslib/basic
+DEFINE tsmcN65 /home/lab.apps/vlsiapps/kits/tsmc/N65LP/tsmcN65
+DEFINE tcbn65lp /home/lab.apps/vlsiapps/kits/tsmc/N65LP/digital/Back_End/cdk/tcbn65lp_200a_oa/tcbn65lp
+
+DEFINE avTech /home/lab.apps/vlsiapps/assura/current/tools.lnx86/assura/etc/avtech/avTech
+DEFINE rail_rail_t_gate /home/xindil/rail/rail_repo/rail_run/rail_rail_t_gate
+DEFINE rail65 /home/cxchen2/workspace/VTS_T65_RAIL/rail65
+DEFINE demo /home/xindil/rail/rail_repo/rail_run/demo
+DEFINE demo2 /home/xindil/rail/rail_repo/rail_run/demo2
